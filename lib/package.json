@@ -1,5 +1,5 @@
 {
-  "name": "wave-toolkit",
+  "name": "@heyheyjude/toolkit",
   "version": "0.1.0",
   "description": "test",
   "main": "lib/commonjs/index",
@@ -32,7 +32,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepack": "bob build",
     "release": "release-it",
-    "example": "yarn --cwd example",
+    "example": "yarn --cwd ../example",
     "bootstrap": "yarn example && yarn install"
   },
   "keywords": [
@@ -49,6 +49,10 @@
   "homepage": "https://github.com/heyheyjude/wave-toolkit#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "effector": "^22.7.0",
+    "effector-react": "^22.5.1"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
@@ -68,7 +72,6 @@
     "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
     "react": "18.2.0",
-    "react-native": "0.71.6",
     "react-native-builder-bob": "^0.20.0",
     "release-it": "^15.0.0",
     "typescript": "^4.5.2"
@@ -77,8 +80,7 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": "*"
   },
   "engines": {
     "node": ">= 16.0.0"
@@ -88,7 +90,7 @@
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
+      "<rootDir>/lib/lib/"
     ]
   },
   "commitlint": {
@@ -113,40 +115,10 @@
       }
     }
   },
-  "eslintConfig": {
-    "root": true,
-    "parser": "@babel/eslint-parser",
-    "extends": [
-      "@react-native-community",
-      "prettier"
-    ],
-    "rules": {
-      "no-unused-vars": "warn",
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false,
-          "semi": false
-        }
-      ]
-    }
-  },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "./lib/"
   ],
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false,
-    "semi": false
-  },
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
@@ -160,9 +132,5 @@
         }
       ]
     ]
-  },
-  "dependencies": {
-    "effector": "^22.7.0",
-    "effector-react": "^22.5.1"
   }
 }
