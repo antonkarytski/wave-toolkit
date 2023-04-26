@@ -8,16 +8,12 @@ import {
 import {
   MapperFn,
   Method,
+  MethodSettings,
   RequestProps,
   RequestPropsGetter,
-  RequestRouteSettings,
 } from './types'
 import { ServerManager } from '../serverManager/ServerManager'
 import { removeSlashes } from '../../common/string/helpers'
-
-export type MethodSettings = {
-  endpoint?: string | number
-} & RequestRouteSettings
 
 type SpecificMethodSettings<T> = Omit<MethodSettings, 'method'> & {
   fn?: MapperFn<T>
@@ -48,7 +44,7 @@ export class Endpoint {
   public constructor(endpoint: string)
   public constructor(
     serverOrEndpoint: string | ServerManager | null,
-    endpoint?: string
+    endpoint?: string,
   ) {
     if (typeof serverOrEndpoint === 'string') {
       this._endpoint = removeSlashes(serverOrEndpoint)
@@ -76,7 +72,7 @@ export class Endpoint {
   }
 
   private createCommonRequestData(
-    method: Method | MethodSettings
+    method: Method | MethodSettings,
   ): RequestProps {
     if (typeof method === 'string') {
       return {
@@ -98,7 +94,7 @@ export class Endpoint {
 
   private methodWithBody<T>(
     method: Method | MethodSettings,
-    fn?: MapperFn<T>
+    fn?: MapperFn<T>,
   ): RequestPropsGetter<T> {
     const common = this.createCommonRequestData(method)
     return ((props: T) => {
@@ -130,7 +126,7 @@ export class Endpoint {
 
   private methodWithParams<T>(
     method: Method | MethodSettings,
-    fn?: MapperFn<T>
+    fn?: MapperFn<T>,
   ): RequestPropsGetter<T> {
     const common = this.createCommonRequestData(method)
     return ((props: T) => {
@@ -160,10 +156,10 @@ export class Endpoint {
     }) as RequestPropsGetter<T>
   }
 
-  public method<T>(
+  public readonly method = <T>(
     method: Method | MethodSettings,
-    fn?: MapperFn<T>
-  ): RequestPropsGetter<T> {
+    fn?: MapperFn<T>,
+  ): RequestPropsGetter<T> => {
     if (
       method === 'GET' ||
       (typeof method === 'object' && method.method === 'GET')
@@ -191,7 +187,7 @@ export class Endpoint {
     const endpoint = removeSlashes(rawEndpoint)
     const endpointEntity = new Endpoint(
       this.server,
-      `${this._endpoint}/${endpoint}`
+      `${this._endpoint}/${endpoint}`,
     )
     if (this.isProtected) endpointEntity.protect()
     return endpointEntity

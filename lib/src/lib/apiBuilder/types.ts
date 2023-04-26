@@ -45,9 +45,18 @@ export type CreateRequestProps<Params> = {
 
 export type RequestHandler = <Response, Params>(
   props: DoRequestProps<Params>,
-  driver?: typeof fetch
+  driver?: typeof fetch,
 ) => Promise<Response>
 
 export type RequestDataGetter = <Params>(
-  props: DoRequestProps<Params>
+  props: DoRequestProps<Params>,
 ) => Promise<RequestInit>
+
+export type MethodSettings = {
+  endpoint?: string | number
+} & RequestRouteSettings
+
+export type CreateApiEffectProps<Params> = {
+  fn?: MapperFn<Params>
+  rawResponse?: boolean
+} & MethodSettings

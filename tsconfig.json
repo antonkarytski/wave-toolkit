@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "wave-toolkit": ["./lib/src/index"]
+      "@heyheyjude/toolkit": ["./lib/src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

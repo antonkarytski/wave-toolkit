@@ -1,4 +1,3 @@
-import { createEffect } from 'effector'
 import { ServerManager } from '../serverManager/ServerManager'
 import { ApiDebug, DebugSettings } from './ApiDebug'
 import { ApiEndpoint, CreateApiEndpointSettings } from './ApiEndpoint'
@@ -13,6 +12,8 @@ import {
   RequestFnProps,
 } from './types'
 import { TokenRefresher, TokenSettings } from './types.token'
+import { createApiEffect } from './effect'
+import { ApiContext } from './types.modules'
 
 export type RequestModelProps = {
   server?: ServerManager
@@ -39,6 +40,14 @@ export class ApiManager {
   }: RequestModelProps = {}) {
     if (server) this.server = server
     this.token = new TokenManager(tokenRefresher, tokenSettings)
+  }
+
+  private getContext(endpoint: Endpoint): ApiContext {
+    return {
+      endpoint,
+      requestDataGetter: this.prepareData.bind(this),
+      requestHandler: this.doRequest.bind(this),
+    }
   }
 
   private async retrieveToken(props: RequestFnProps<any>) {
@@ -85,21 +94,13 @@ export class ApiManager {
   ) {
     const endpoint = new Endpoint(this.server, props.endpoint)
     if (props.withToken) endpoint.protect()
-    const propsGetter = endpoint.method(props.method, props.fn)
-    return createEffect((params: Params) => {
-      const requestProps = propsGetter(params)
-      return this.doRequest<Response, Params>(requestProps)
-    })
+    return createApiEffect<Response, Params>(props, this.getContext(endpoint))
   }
 
   public endpoint(endpoint: string, settings?: CreateApiEndpointSettings) {
     const endpointEntity = new Endpoint(this.server, endpoint)
     if (settings?.withToken) endpointEntity.protect()
-    return new ApiEndpoint({
-      endpoint: endpointEntity,
-      requestHandler: this.doRequest.bind(this),
-      requestDataGetter: this.prepareData.bind(this),
-    })
+    return new ApiEndpoint(this.getContext(endpointEntity))
   }
 
   public debug(settings: DebugSettings = {}) {
