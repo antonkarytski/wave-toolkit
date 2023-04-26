@@ -1,6 +1,6 @@
 {
   "name": "@heyheyjude/toolkit",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "General toolkit with effector",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -51,8 +51,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "effector": "^22.7.0",
-    "effector-react": "^22.5.1"
+
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
@@ -80,7 +79,9 @@
     "@types/react": "17.0.21"
   },
   "peerDependencies": {
-    "react": "*"
+    "react": "*",
+    "effector": "*",
+    "effector-react": "*"
   },
   "engines": {
     "node": ">= 16.0.0"
