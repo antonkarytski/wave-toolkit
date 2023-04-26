@@ -32,7 +32,7 @@ export class TokenManager {
     .reset(this.reset)
 
   constructor(
-    refresher: TokenRefresher,
+    refresher: TokenRefresher = () => Promise.resolve(null),
     {
       accessLifeTime = minutes(30),
       refreshLifeTime = days(30),

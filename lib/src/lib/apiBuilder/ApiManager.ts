@@ -16,7 +16,7 @@ import { TokenRefresher, TokenSettings } from './types.token'
 
 export type RequestModelProps = {
   server?: ServerManager
-  tokenRefresher: TokenRefresher
+  tokenRefresher?: TokenRefresher
   tokenSettings?: TokenSettings
   requestRepeatFilter?: RequestRepeatFilter
 }
