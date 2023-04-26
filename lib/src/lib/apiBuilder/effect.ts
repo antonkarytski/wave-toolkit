@@ -3,12 +3,12 @@ import { createXhr } from '../request/xhr'
 import { CreateApiEffectProps, RequestProps } from './types'
 import { ApiContext } from './types.modules'
 
-type RawCreator<Params> = {
+export type RawCreator<Params> = {
   <T>(mapper: (response: Response) => T): Effect<Params, T>
   (): Effect<Params, Response>
 }
 
-type ApiEffectFields<Params, R> = {
+export type ApiEffectFields<Params, R> = {
   withProgress: () => ApiProgressEffect<Params, R>
   raw: RawCreator<Params>
   url: (params: Params) => string
@@ -17,14 +17,14 @@ type ApiEffectFields<Params, R> = {
   unprotect: () => ApiEffect<Params, R>
   protect: () => ApiEffect<Params, R>
 }
-type ApiProgressEffectFields<Params, Response> = {
+export type ApiProgressEffectFields<Params, Response> = {
   progress: Event<ProgressEvent>
   copy: () => ApiProgressEffect<Params, Response>
 }
 
-type ApiEffect<Params, Response> = Effect<Params, Response> &
+export type ApiEffect<Params, Response> = Effect<Params, Response> &
   ApiEffectFields<Params, Response>
-type ApiProgressEffect<Params, Response> = ApiEffect<Params, Response> &
+export type ApiProgressEffect<Params, Response> = ApiEffect<Params, Response> &
   ApiProgressEffectFields<Params, Response>
 
 export const createApiEffect = <R = any, P = void>(

@@ -1,5 +1,4 @@
-import { Effect, Event } from 'effector'
-import { CreateApiEffectProps, MapperFn, Method, RequestProps } from './types'
+import { CreateApiEffectProps, MapperFn, Method } from './types'
 import { createApiEffect } from './effect'
 import { ApiContext } from './types.modules'
 import { Endpoint } from './Endpoint'

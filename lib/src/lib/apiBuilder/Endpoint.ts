@@ -48,7 +48,6 @@ export class Endpoint {
   ) {
     if (typeof serverOrEndpoint === 'string') {
       this._endpoint = removeSlashes(serverOrEndpoint)
-      console.log('ENDPOINT', this._endpoint)
       return
     }
     if (serverOrEndpoint) {
@@ -57,7 +56,6 @@ export class Endpoint {
       return
     }
     this._endpoint = removeSlashes(endpoint || '')
-    console.log('ENDPOINT!!', endpoint)
   }
 
   public setProtection(state: boolean) {
@@ -76,7 +74,6 @@ export class Endpoint {
   private createCommonRequestData(
     method: Method | MethodSettings,
   ): RequestProps {
-    console.log('CREATE', method)
     if (typeof method === 'string') {
       return {
         withToken: this.isProtected,
@@ -132,7 +129,6 @@ export class Endpoint {
     fn?: MapperFn<T>,
   ): RequestPropsGetter<T> {
     const common = this.createCommonRequestData(method)
-    console.log('COMMON', common)
     return ((props: T) => {
       if (!fn) {
         if (props === undefined || props === null) return common
