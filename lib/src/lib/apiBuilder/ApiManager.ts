@@ -23,7 +23,7 @@ export type RequestModelProps = {
 export type RequestRepeatFilter = <T>(
   props: DoRequestProps<T>,
   response: Response,
-  context: ApiManager
+  context: ApiManager,
 ) => Promise<DoRequestProps<T> | undefined | null>
 
 export class ApiManager {
@@ -32,7 +32,11 @@ export class ApiManager {
   private readonly server: ServerManager | null = null
   private readonly requestRepeatFilter: RequestRepeatFilter | null = null
 
-  constructor({ server, tokenRefresher, tokenSettings }: RequestModelProps) {
+  constructor({
+    server,
+    tokenRefresher,
+    tokenSettings,
+  }: RequestModelProps = {}) {
     if (server) this.server = server
     this.token = new TokenManager(tokenRefresher, tokenSettings)
   }
@@ -54,7 +58,7 @@ export class ApiManager {
 
   private async doRequest<R, Params>(
     props: DoRequestProps<Params>,
-    driver = fetch
+    driver = fetch,
   ): Promise<R> {
     const requestData = await this.prepareData(props)
     const response = await driver(props.url, requestData)
@@ -77,7 +81,7 @@ export class ApiManager {
   }
 
   public request<Response = any, Params = void>(
-    props: CreateRequestProps<Params>
+    props: CreateRequestProps<Params>,
   ) {
     const endpoint = new Endpoint(this.server, props.endpoint)
     if (props.withToken) endpoint.protect()
