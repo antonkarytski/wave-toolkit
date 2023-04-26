@@ -28,6 +28,13 @@ export type RequestRepeatFilter = <T>(
 ) => Promise<DoRequestProps<T> | undefined | null>
 
 export class ApiManager {
+  public static singleRequest<Response = any, Params = void>(
+    props: CreateRequestProps<Params>,
+  ) {
+    const rawApiManager = new ApiManager()
+    return rawApiManager.request<Response, Params>(props)
+  }
+
   public readonly token
   public readonly debugger = new ApiDebug()
   private readonly server: ServerManager | null = null
@@ -92,7 +99,7 @@ export class ApiManager {
   public request<Response = any, Params = void>(
     props: CreateRequestProps<Params>,
   ) {
-    const endpoint = new Endpoint(this.server, props.endpoint)
+    const endpoint = new Endpoint(this.server, '')
     if (props.withToken) endpoint.protect()
     return createApiEffect<Response, Params>(props, this.getContext(endpoint))
   }

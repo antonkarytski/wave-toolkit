@@ -36,10 +36,10 @@ export function bodyToParams(body: object) {
 
 export function getUrlEnd(
   value: number | string | undefined,
-  entityId?: number | string
+  entityId?: number | string,
 ) {
   let result: string = ''
-  if (typeof value === 'string') result = `/${removeSlashes(value)}`
+  if (typeof value === 'string' && value) result = `/${removeSlashes(value)}`
   if (typeof value === 'number') result = `/${value}`
   if (entityId) result += `/${entityId}`
   return result
@@ -77,7 +77,7 @@ export async function doRequest<Body>(props: RequestFnProps<Body>) {
 }
 
 export async function request<Response, Body = any>(
-  props: RequestFnProps<Body>
+  props: RequestFnProps<Body>,
 ) {
   const response = await doRequest(props)
   const contentType = response.headers.get('content-type')
