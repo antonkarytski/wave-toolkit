@@ -5,8 +5,8 @@ import {
   createEvent,
   createStore,
   restore,
+  attach,
 } from 'effector'
-import { attach } from 'effector/effector.cjs'
 import { ObjectSchema, ValidationError } from 'yup'
 import { mapObject } from '../../../common/helpers'
 import { invalid, mergeValidation, valid, validateWoSchema } from './helpers'
