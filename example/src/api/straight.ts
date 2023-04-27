@@ -2,7 +2,8 @@ import { ApiManager } from "@heyheyjude/toolkit";
 
 const simple = ApiManager.singleRequest({
   endpoint: "https://jsonplaceholder.typicode.com/todos/1",
-  method: "GET",
+  method: "POST",
+  fn: () => ({ body: { hello: 1 } }),
 });
 
 simple.requestData().then((e) => {
