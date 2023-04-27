@@ -1,5 +1,5 @@
 {
-  "name": "@heyheyjude/toolkit",
+  "name": "wave-toolkit",
   "version": "0.1.7",
   "description": "General toolkit with effector",
   "main": "lib/commonjs/index",
