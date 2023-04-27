@@ -73,7 +73,7 @@ export async function doRequest<Body>(props: RequestFnProps<Body>) {
   if (props.withToken && !props.token) {
     throw ApiError.noTokenProvided()
   }
-  return fetch(props.url, prepareRequestData(props))
+  return fetch(props.url(), prepareRequestData(props))
 }
 
 export async function request<Response, Body = any>(
