@@ -77,7 +77,7 @@ export class ApiManager {
     driver = fetch,
   ): Promise<R> {
     const requestData = await this.prepareData(props)
-    const response = await driver(props.url, requestData)
+    const response = await driver(props.url(), requestData)
     const contentType = response.headers.get('content-type')
     const isJsonAvailable = contentType === ContentType.JSON
     this.debugger.response(response)

@@ -1,5 +1,7 @@
 import { straightApi } from "./straight";
+import { serverApi } from "./servered";
 
 export const api = {
-  straightApi,
+  straight: straightApi,
+  server: serverApi,
 };

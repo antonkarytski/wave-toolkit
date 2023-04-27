@@ -14,7 +14,7 @@ export type RequestRouteSettings = {
 }
 type RequestData<Body = any> = {
   contentType?: ContentType
-  url: string
+  url: () => string
   body?: Body
 }
 export type RequestProps<Body = any> = RequestRouteSettings & RequestData<Body>

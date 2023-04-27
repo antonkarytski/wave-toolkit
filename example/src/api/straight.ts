@@ -5,7 +5,6 @@ const simple = ApiManager.singleRequest({
   method: "POST",
   fn: () => ({ body: { hello: 1 } }),
 });
-
 simple.requestData().then((e) => {
   console.log(e);
 });
@@ -21,4 +20,5 @@ validatePhone.requestData("+48666506120").then((e) => {
 
 export const straightApi = {
   simple,
+  validatePhone,
 };

@@ -74,10 +74,10 @@ export const createApiEffect = <R = any, P = void>(
   effect.requestData = async params => {
     const requestProps = propsGetter(params)
     const data = await context.requestDataGetter(requestProps)
-    return { data, url: requestProps.url }
+    return { data, url: requestProps.url() }
   }
   effect.requestProps = params => propsGetter(params)
-  effect.url = params => propsGetter(params).url
+  effect.url = params => propsGetter(params).url()
   effect.protect = () => createCopy({ withToken: true })
   effect.unprotect = () => createCopy({ withToken: false })
 

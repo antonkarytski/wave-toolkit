@@ -77,7 +77,7 @@ export class Endpoint {
     if (typeof method === 'string') {
       return {
         withToken: this.isProtected,
-        url: this.endpoint,
+        url: () => this.endpoint,
         method,
         rawResponse: false,
       }
@@ -85,7 +85,7 @@ export class Endpoint {
     const result: RequestProps = {
       method: method.method,
       withToken: method.withToken ?? this.isProtected,
-      url: removeSlashes(`${this.endpoint}${getUrlEnd(method.endpoint)}`),
+      url: () => removeSlashes(`${this.endpoint}${getUrlEnd(method.endpoint)}`),
       rawResponse: method.rawResponse ?? false,
     }
     if (method.contentType) result.contentType = method.contentType
@@ -97,30 +97,34 @@ export class Endpoint {
     fn?: MapperFn<T>,
   ): RequestPropsGetter<T> {
     const common = this.createCommonRequestData(method)
-    return ((props: T) => {
+    return ((props: T): RequestProps<T> => {
       if (!fn) {
         if (props === undefined || props === null) return common
         if (isContentTypeFormData(common.contentType)) {
-          return { ...common, body: checkForFormData(props) }
+          return { ...common, body: checkForFormData(props) as any }
         }
         return { ...common, body: props }
       }
       const result = fn(props)
       if (props === undefined || props === null) return common
       if (isPrimitive(result)) {
-        return { ...common, url: `${common.url}${getUrlEnd(result)}` }
+        return { ...common, url: () => `${common.url()}${getUrlEnd(result)}` }
       }
       const { body, url, entityId, ...rest } = result
       const urlEnd = getUrlEnd(url, entityId)
-      const urlFull = `${common.url}${urlEnd}`
       const isFormData =
         isContentTypeFormData(rest.contentType) ||
         (!rest.contentType && isContentTypeFormData(common.contentType))
       if (isFormData) {
         const formData = checkForFormData(body)
-        return { ...common, ...rest, body: formData, url: urlFull }
+        return {
+          ...common,
+          ...rest,
+          body: formData,
+          url: () => `${common.url()}${urlEnd}`,
+        }
       }
-      return { ...common, ...rest, body, url: urlFull }
+      return { ...common, ...rest, body, url: () => `${common.url()}${urlEnd}` }
     }) as RequestPropsGetter<T>
   }
 
@@ -129,20 +133,20 @@ export class Endpoint {
     fn?: MapperFn<T>,
   ): RequestPropsGetter<T> {
     const common = this.createCommonRequestData(method)
-    return ((props: T) => {
+    return ((props: T): RequestProps<T> => {
       if (!fn) {
         if (props === undefined || props === null) return common
         if (isPrimitive(props)) {
-          return { ...common, url: `${common.url}/${props}` }
+          return { ...common, url: () => `${common.url()}/${props}` }
         }
         const params = bodyToParams(props)
-        const url = params ? `${common.url}?${params}` : common.url
+        const url = params ? () => `${common.url()}?${params}` : common.url
         return { ...common, url }
       }
       const result = fn(props)
       if (result === undefined || result === null) return common
       if (isPrimitive(result)) {
-        return { ...common, url: `${common.url}${getUrlEnd(result)}` }
+        return { ...common, url: () => `${common.url()}${getUrlEnd(result)}` }
       }
       const { body, url, entityId, ...rest } = result
       const params = body ? bodyToParams(body) : ''
@@ -151,7 +155,7 @@ export class Endpoint {
       return {
         ...common,
         ...rest,
-        url: `${common.url}${urlEnd}${urlParams}`,
+        url: () => `${common.url()}${urlEnd}${urlParams}`,
       }
     }) as RequestPropsGetter<T>
   }
