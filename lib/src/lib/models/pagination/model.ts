@@ -1,6 +1,6 @@
 import { attach, createEffect, createEvent, restore, sample } from 'effector'
 import { noop } from '../../../common/helpers'
-import { GetNextFxProps, PaginatedListModelProps } from './types'
+import { GetNextFxProps, NextPageFilterProps, PaginatedListModelProps } from './types'
 import { createStateModel } from '../state'
 
 export class PaginatedListModel<T, R, P> {
@@ -9,9 +9,9 @@ export class PaginatedListModel<T, R, P> {
   private readonly nextPageGetter
   private readonly totalCountGetter 
   private readonly currentPageGetter 
+  private readonly pageSize 
   private readonly nextPage = createStateModel<number | null>(1)
   private readonly defaultProps
-  private readonly staticProps
 
   public readonly init = createEvent<P>()
 
@@ -22,15 +22,15 @@ export class PaginatedListModel<T, R, P> {
     totalCountGetter,
     currentPageGetter,
     defaultProps,
-    staticProps
+    pageSize
   }: PaginatedListModelProps<T, R, P>) {
     this.defaultProps = defaultProps
-    this.staticProps = staticProps
     this.request = request
     this.itemsExtractor = itemsExtractor
     this.nextPageGetter = nextPageFilter
     this.totalCountGetter = totalCountGetter
     this.currentPageGetter = currentPageGetter
+    this.pageSize = pageSize
 
     this.get.done.watch(this.resetListWith)
     this.refresh.done.watch(this.resetListWith)
@@ -52,11 +52,7 @@ export class PaginatedListModel<T, R, P> {
       if (!props) return
       const { newItems, ...nextPageProps } = props
       this.addItems(newItems)
-      const nextPage = this.nextPageGetter(nextPageProps)
-      this.nextPage.set(nextPage)
-      const { response } = nextPageProps
-      this.setTotalCount(this.totalCountGetter?.(response))
-      this.setCurrentPage(this.currentPageGetter?.(response))
+      this.setPagesCountInfo({ nextPageProps })
     })
 
     sample({
@@ -70,14 +66,23 @@ export class PaginatedListModel<T, R, P> {
   private readonly resetListWith = ({ result }: { result: R }) => {
     const items = this.itemsExtractor(result)
     this.setItems(items)
-    const nextPage = this.nextPageGetter({
-      total: items.length,
-      response: result,
-      page: 1,
-    })
-    this.nextPage.set(nextPage)
-    this.setTotalCount(this.totalCountGetter?.(result))
-    this.setCurrentPage(this.currentPageGetter?.(result))
+    const nextPageProps = { page: 1 , total: items.length, response: result }
+    this.setPagesCountInfo({ nextPageProps })
+  }
+
+  private readonly setPagesCountInfo = ({ nextPageProps } : { nextPageProps: NextPageFilterProps<R> }) => {
+    if(this.nextPageGetter) {
+      const nextPage = this.nextPageGetter(nextPageProps)
+      this.nextPage.set(nextPage)
+    } 
+    if(this.totalCountGetter && this.currentPageGetter && this.pageSize) {
+      const totalCount = this.totalCountGetter(nextPageProps.response)
+      const currentPage = this.currentPageGetter(nextPageProps.response)
+      this.setTotalCount(totalCount)
+      this.setCurrentPage(currentPage)
+      const nextPage = totalCount > this.pageSize * currentPage ? currentPage + 1 : null
+      this.nextPage.set(nextPage)
+    }
   }
 
   private readonly setCurrentPage = createEvent<number | undefined>()
@@ -89,7 +94,7 @@ export class PaginatedListModel<T, R, P> {
   public readonly get = createEffect((props: P) => {
     return this.request({
       page: 1,
-      ...this.staticProps,
+      ...this.defaultProps,
       ...props,
     })
   })
@@ -103,7 +108,6 @@ export class PaginatedListModel<T, R, P> {
       if (!page || page === 1 || isLoading) return null
       return this.request({
         ...this.defaultProps!,
-        ...this.staticProps,
         page,
       })
     },
