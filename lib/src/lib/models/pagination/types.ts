@@ -10,9 +10,20 @@ export type NextPageFilterProps<R> = {
   page: number;
   response: R;
 };
+
+
 export type PaginatedListModelProps<T, R, P> = {
   request: Effect<P, R>;
-  itemExtractor: (response: R) => T[];
-  nextPageFilter: (props: NextPageFilterProps<R>) => number | null;
+  itemsExtractor: (response: R) => T[];
   defaultProps?: P;
-};
+} & ({
+  nextPageFilter: (props: NextPageFilterProps<R>) => number | null;
+  totalCountGetter?: (response: R) =>  number;
+  currentPageGetter?: (response: R) =>  number;
+  pageSize?: number
+} | {
+  nextPageFilter?: (props: NextPageFilterProps<R>) => number | null;
+  totalCountGetter: (response: R) =>  number;
+  currentPageGetter: (response: R) =>  number;
+  pageSize: number
+})
